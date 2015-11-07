@@ -1,12 +1,5 @@
 #!/usr/bin/env python
 # coding=utf-8
-
-"""
-Flask-based Web application that demonstrates Twitter API
-
-Used oauthlib for OAuth 2.0 implementation - https://github.com/simplegeo/python-oauth2
-"""
-
 from flask import Flask, render_template, redirect, flash, request
 from flask_bootstrap import Bootstrap
 
