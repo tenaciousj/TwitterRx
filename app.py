@@ -195,4 +195,5 @@ if __name__ == "__main__":
     except: raise
 
     #app.run(port=8002, debug=True)
-    app.run()
+    port = int(os.environ.get("PORT", 8002))
+    app.run(host='0.0.0.0', port=port)
