@@ -194,4 +194,5 @@ if __name__ == "__main__":
         APP_TOKEN['access_token']
     except: raise
 
-    app.run(port=8002, debug=True)
+    #app.run(port=8002, debug=True)
+    app.run()
