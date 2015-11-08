@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding=utf-8
 from flask import Flask, render_template, redirect, flash, request
-from flask_bootstrap import Bootstrap
+#from flask_bootstrap import Bootstrap
 
 from json import loads
 
