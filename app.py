@@ -193,7 +193,6 @@ if __name__ == "__main__":
         APP_TOKEN = get_app_token()
         APP_TOKEN['access_token']
     except: raise
-    app.run()
     # app.run(port=8002, debug=True)
-    # port = int(os.environ.get("PORT", 8002))
-    # app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
