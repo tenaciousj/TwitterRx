@@ -144,6 +144,8 @@ def handle_gettweets():
             raw_tweets = loads(user_timeline.data)
             tweets = []
             tweet_words = []
+            list_cords=[]
+            coords={}
 
             #sanitize tweet to get rid of unnecessary words
             for item in raw_tweets:
@@ -163,7 +165,8 @@ def handle_gettweets():
 
             print "SENTIMENT ANALYSIS"
             answer = sentiment_analysis(tweets)
-            print answer
+
+            print "answer!!!!!!! ",answer
             #return render_template('index.html',rating=answer)
             return jsonify(res=answer)
             #return answer
