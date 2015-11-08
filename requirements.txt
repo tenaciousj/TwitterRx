@@ -1,7 +1,6 @@
 altgraph==0.10.1
 bdist-mpkg==0.4.4
 beautifulsoup4==4.3.2
-bonjour-py==0.3
 cymem==1.11
 dominate==2.1.16
 Flask==0.10.1
