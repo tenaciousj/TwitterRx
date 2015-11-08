@@ -71,7 +71,7 @@ def get_request_token():
     resp, content = oauth2.Client(CONSUMER).request('https://api.twitter.com/oauth/request_token', "GET")
 
     if resp['status'] != '200':
-        print content
+        #print content
         raise Exception("Invalid response %s." % resp['status'])
 
     REQUEST_TOKEN = dict(urlparse.parse_qsl(content))
@@ -119,25 +119,25 @@ def handle_root():
     return render_template('index.html')
 
 
-@app.route("/gettweets",methods=["POST"])
+@app.route("/gettweets") #,methods=["POST"]
 def handle_gettweets():
     try:
-        chkvalid="https://api.twitter.com/1.1/users/lookup.json?screen_name="+request.form["twitterHandle"]
+        handle = request.args.get('handle', 0, type=str)
+        chkvalid="https://api.twitter.com/1.1/users/lookup.json?screen_name="+handle
         chkvalid_resp=MANAGER.urlopen('GET',chkvalid,headers={'Authorization': 'Bearer %s' % APP_TOKEN['access_token']})
         scrnm=loads(chkvalid_resp.data)
-        print scrnm
+        #print scrnm
         
         if isinstance(scrnm,dict) and "errors" in scrnm.keys():
             error_message="Invalid twitter screen name"
-            print error_message
+            #print error_message
             return render_template("index.html", error_msg=error_message)
             
 
-            
-        #return render_template('timeline.html')
+        
         else:
             
-            url="https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+request.form["twitterHandle"]
+            url="https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+handle
             user_timeline = MANAGER.urlopen('GET',
                                             url,
                                             headers={'Authorization': 'Bearer %s' % APP_TOKEN['access_token']})
@@ -159,49 +159,26 @@ def handle_gettweets():
             #print tweet_strs
             #pp = pprint.PrettyPrinter(indent=4)
             #pp.pprint(tweets)
-            wordsfreq = Counter(tweet_words)
-            printByLine( countsSortedAlphabetically(wordsfreq, reverse=True) )
+            
 
             print "SENTIMENT ANALYSIS"
-            answer = sentiment_analysis(tweets)
+            answer = str(sentiment_analysis(tweets))
             print answer
-            return render_template('timeline.html',tweets=raw_tweets,sentiment=answer)
+            #return render_template('index.html',rating=answer)
+            #return jsonify(result=answer)
+            return answer
 
 
 
-    except: raise
+    except Exception as ex:
+        print ex 
+        raise
 
-    
-def sentiment_analysis(tweets):
-    pos = []
-    neg = []
-    neut = []
-    for t in tweets:
-        url = "http://text-processing.com/api/sentiment/"
-        payload = { 'text': t }
-        headers = {}
-        r=requests.post(url, data=payload, headers=headers)
-
-        j = r.json()
-        #print j
-        pos.append(float(j['probability']['pos']))
-        neg.append(float(j['probability']['neg']))
-        neut.append(float(j['probability']['neutral']))
-    #graph_html = plot_graph(post,neg,neut)
-    return 0
-
-def plot_graph(pos,neg,neut):
-    fig = plt.figure()
-    plt.plot(pos,'g')
-    plt.plot(neg,'r')
-    plt.plot(neut,'b')
-    graph_html = mpld3.fig_to_html(fig)
-    return graph_html
 
 # def sentiment_analysis(tweets):
-#     pos = 0
-#     neut = 0
-#     neg = 0
+#     pos = []
+#     neg = []
+#     neut = []
 #     for t in tweets:
 #         url = "http://text-processing.com/api/sentiment/"
 #         payload = { 'text': t }
@@ -209,18 +186,37 @@ def plot_graph(pos,neg,neut):
 #         r=requests.post(url, data=payload, headers=headers)
 
 #         j = r.json()
-#         if str(j['label']) == "pos":
-#             pos+=1
-#         elif str(j['label']) == "neutral":
-#             neut+=1
-#         else:
-#             neg+=1
-#     if pos >= neut and pos >= neg:
-#         return 1
-#     elif neut >= pos and neut >= neg:
-#         return 0
-#     else:
-#         return -1
+#         #print j
+#         pos.append(float(j['probability']['pos']))
+#         neg.append(float(j['probability']['neg']))
+#         neut.append(float(j['probability']['neutral']))
+#     #graph_html = plot_graph(post,neg,neut)
+#     return 0
+
+
+def sentiment_analysis(tweets):
+    pos = 0
+    neut = 0
+    neg = 0
+    for t in tweets:
+        url = "http://text-processing.com/api/sentiment/"
+        payload = { 'text': t }
+        headers = {}
+        r=requests.post(url, data=payload, headers=headers)
+
+        j = r.json()
+        if str(j['label']) == "pos":
+            pos+=1
+        elif str(j['label']) == "neutral":
+            neut+=1
+        else:
+            neg+=1
+    if pos >= neut and pos >= neg:
+        return 1
+    elif neut >= pos and neut >= neg:
+        return 0
+    else:
+        return -1
 
 @app.route("/callback")
 def handle_callback():

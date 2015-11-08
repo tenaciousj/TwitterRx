@@ -15,6 +15,7 @@
 
     <!-- Custom styles for this template -->
     <link href="{{url_for('static', filename='cover.css')}}" rel="stylesheet">
+    <link href="{{url_for('static', filename='animate.css')}}" rel="stylesheet">
     <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
 
 
@@ -34,6 +35,20 @@
 
     }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type=text/javascript>
+      $(document).ready(function(){
+          $("#submitBtn").click(function(){
+              $.ajax({
+                      url: "/gettweets",
+                      data: { handle : $('input[name="twitterHandle"]').val() },
+                      success: function(res){
+                        $("#result").html("Your rating is " + res);
+                    }
+            });
+          });
+      });
+  </script>
   </head>
 
   <body>
@@ -45,23 +60,47 @@
         <div class="cover-container">
 
 
-          <div class="inner cover">
+          <div class="inner cover animated fadeIn">
             <h1 class="cover-heading" style="font-size: 5em; text-shadow:0px 2px 2px #787878">TwitterRx</h1>
-            <form action="gettweets" method="post">
+            <p style="font-size: 1.2em">Twitter Handle:</p>
+            <p>
+              <input type="text" style="color:black; padding: 5px; border-radius:5px; border:none; box-shadow: 2px 2px 4px #787878" name="twitterHandle">
+            </p>
+            <p>
+              <input id="submitBtn" class="btn btn-lg btn-default" type="submit" value="Submit" style:"color:#AEAEAE">
+            </p>
+            <p id="result"></p>
+            <!-- <p class="errorMsg">
+              {% if error_msg %}
+                <h1>{{ error_msg }}</h1>
+              {% endif %}
+              {% if rating %}
+                  <h1>Your rating: {{ rating }}</h1>
+              {% endif %}
+            </p>
+            <br>
+            <p class="lead">
+                    <input id="submitBtn" class="btn btn-lg btn-default" type="submit" value="Submit" style:"color:#AEAEAE">
+            </p> -->
+
+
+            <!-- <form action="gettweets" method="post">
         				<p style="font-size: 1.2em">Twitter Handle:</p>
         				<p><input type="text" style="color:black; padding: 5px; border-radius:5px; border:none; box-shadow: 2px 2px 4px #787878" name="twitterHandle"></p>
                 <p class="errorMsg">
                   {% if error_msg %}
                     <h1>{{ error_msg }}</h1>
                   {% endif %}
+                  {% if rating %}
+                      <h1>Your rating: {{ rating }}</h1>
+                  {% endif %}
                 </p>
         				<br>
         				<p class="lead">
-        	              <input class="btn btn-lg btn-default" type="submit" value="Submit" style:"color:#AEAEAE">
+        	              <input id="submitBtn" class="btn btn-lg btn-default" type="submit" value="Submit" style:"color:#AEAEAE">
         	      </p>
 
-			     </form>
-          </div>
+			     </form> -->
 
           <div class="mastfoot">
             <div class="inner">
@@ -78,7 +117,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
   </body>
 </html>
