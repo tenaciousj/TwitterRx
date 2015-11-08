@@ -9,6 +9,7 @@ import logging, urllib3, urllib, urlparse
 import oauth2, hmac
 import pprint
 import requests
+#import matplotlib.pyplot as plt, mpld3
 
 from base64 import b64encode
 
@@ -19,6 +20,7 @@ from wtforms.validators import DataRequired, Length
 from hashlib import sha1
 from random import random
 from time import time
+
 
 app = Flask(__name__)
 app.secret_key = "tdKfy8fVvAQHQtIVgjQnU4kTPpqsuNTivXySnKIIW7Ka8"
@@ -132,17 +134,17 @@ def handle_gettweets():
         for item in raw_tweets:
             tweets.append(str(item['text'].encode('utf-8')))
 
-        print "SENTIMENT ANALYSIS"
-        answer = sentiment_analysis(tweets)
-        print answer
+        
+        #graph_html = sentiment_analysis(tweets)
         #return render_template('timeline.html',tweets=tweets)
-        return render_template('timeline.html')
-    except: raise
 
+        return render_template('timeline.html')
+        #return render_template('timeline.html')
+    except: raise
 def sentiment_analysis(tweets):
-    pos = 0
-    neut = 0
-    neg = 0
+    pos = []
+    neg = []
+    neut = []
     for t in tweets:
         url = "http://text-processing.com/api/sentiment/"
         payload = { 'text': t }
@@ -150,18 +152,44 @@ def sentiment_analysis(tweets):
         r=requests.post(url, data=payload, headers=headers)
 
         j = r.json()
-        if str(j['label']) == "pos":
-            pos+=1
-        elif str(j['label']) == "neutral":
-            neut+=1
-        else:
-            neg+=1
-    if pos >= neut and pos >= neg:
-        return 1
-    elif neut >= pos and neut >= neg:
-        return 0
-    else:
-        return -1
+        #print j
+        pos.append(float(j['probability']['pos']))
+        neg.append(float(j['probability']['neg']))
+        neut.append(float(j['probability']['neutral']))
+    #graph_html = plot_graph(post,neg,neut)
+    return 0
+
+def plot_graph(pos,neg,neut):
+    fig = plt.figure()
+    plt.plot(pos,'g')
+    plt.plot(neg,'r')
+    plt.plot(neut,'b')
+    graph_html = mpld3.fig_to_html(fig)
+    return graph_html
+
+# def sentiment_analysis(tweets):
+#     pos = 0
+#     neut = 0
+#     neg = 0
+#     for t in tweets:
+#         url = "http://text-processing.com/api/sentiment/"
+#         payload = { 'text': t }
+#         headers = {}
+#         r=requests.post(url, data=payload, headers=headers)
+
+#         j = r.json()
+#         if str(j['label']) == "pos":
+#             pos+=1
+#         elif str(j['label']) == "neutral":
+#             neut+=1
+#         else:
+#             neg+=1
+#     if pos >= neut and pos >= neg:
+#         return 1
+#     elif neut >= pos and neut >= neg:
+#         return 0
+#     else:
+#         return -1
 
 @app.route("/callback")
 def handle_callback():

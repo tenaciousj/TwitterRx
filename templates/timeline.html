@@ -40,7 +40,13 @@ window.onload=function() {
 
     <div class="container-fluid" role="main">
         <center><h1 style="color:white;text-shadow:0px 2px 2px #787878">Tweet Sentiment Analysis</h1></center>
-        <center><a href="/" style="color:white">Enter Different Handle</a></center>
+        <center><a href="/" style="color:white;text-decoration:none">Enter Different Handle</a></center>
+        {% if graph %}
+          <h1>{{ graph }}</h1>
+        {% else %}
+          <h1>Hello World!</h1>
+        {% endif %}
+
 
         <!-- <table class="table table-hover table-condensed">
             <thead><tr>
