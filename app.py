@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # coding=utf-8
 from flask import Flask, render_template, redirect, flash, request
-#from flask_bootstrap import Bootstrap
+from flask_bootstrap import Bootstrap
 from json import loads
+import os
 
 import logging, urllib3, urllib, urlparse
 import oauth2, hmac
@@ -193,5 +194,5 @@ if __name__ == "__main__":
         APP_TOKEN['access_token']
     except: raise
     # app.run(port=8002, debug=True)
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get("PORT", 8002))
     app.run(host='0.0.0.0', port=port)
