@@ -127,22 +127,11 @@ def handle_gettweets():
                                         headers={'Authorization': 'Bearer %s' % APP_TOKEN['access_token']})
         raw_tweets = loads(user_timeline.data)
         tweets = []
-        #tweet_words = []
 
         #sanitize tweet to get rid of unnecessary words
         for item in raw_tweets:
-            #tweet = item['text']
             tweets.append(str(item['text'].encode('utf-8')))
-            # tweet_w = tweet.split(" ")
-            # for w in tweet_w:
-            #     if "#" in w:
-            #         w = w.replace("#", "")
-            #     if "http" not in w and "https" not in w and "@" not in w and "\U0" not in w and "\u" not in w:
-            #         tweet_words.append(w.encode('utf-8'))
 
-        #print tweet_strs
-        #pp = pprint.PrettyPrinter(indent=4)
-        #pp.pprint(tweets)
         print "SENTIMENT ANALYSIS"
         answer = sentiment_analysis(tweets)
         print answer
