@@ -2,7 +2,7 @@
 # coding=utf-8
 from flask import Flask, render_template, redirect, flash, request
 #from flask_bootstrap import Bootstrap
-
+import numpy
 from json import loads
 
 import logging, urllib3, urllib, urlparse
