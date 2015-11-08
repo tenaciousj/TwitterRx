@@ -41,9 +41,13 @@
           $("#submitBtn").click(function(){
               $.ajax({
                       url: "/gettweets",
+                      dataType: "json",
                       data: { handle : $('input[name="twitterHandle"]').val() },
                       success: function(res){
-                        $("#result").html("Your rating is " + res);
+                        for (var i in res){
+                          $("#result").html("Your rating is " + res[i]);
+                        }
+                        //$("#result").html("Your rating is " + res);
                     }
             });
           });
@@ -70,6 +74,9 @@
               <input id="submitBtn" class="btn btn-lg btn-default" type="submit" value="Submit" style:"color:#AEAEAE">
             </p>
             <p id="result"></p>
+            {% if error_msg %}
+                <h1>{{ error_msg }}</h1>
+            {% endif %}
             <!-- <p class="errorMsg">
               {% if error_msg %}
                 <h1>{{ error_msg }}</h1>

@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # coding=utf-8
-from flask import Flask, render_template, redirect, flash, request
+from flask import Flask, render_template, redirect, flash, request, jsonify
 from flask_bootstrap import Bootstrap
 from json import loads
 import os
@@ -162,11 +162,11 @@ def handle_gettweets():
             
 
             print "SENTIMENT ANALYSIS"
-            answer = str(sentiment_analysis(tweets))
+            answer = sentiment_analysis(tweets)
             print answer
             #return render_template('index.html',rating=answer)
-            #return jsonify(result=answer)
-            return answer
+            return jsonify(res=answer)
+            #return answer
 
 
 
@@ -175,29 +175,8 @@ def handle_gettweets():
         raise
 
 
-# def sentiment_analysis(tweets):
-#     pos = []
-#     neg = []
-#     neut = []
-#     for t in tweets:
-#         url = "http://text-processing.com/api/sentiment/"
-#         payload = { 'text': t }
-#         headers = {}
-#         r=requests.post(url, data=payload, headers=headers)
-
-#         j = r.json()
-#         #print j
-#         pos.append(float(j['probability']['pos']))
-#         neg.append(float(j['probability']['neg']))
-#         neut.append(float(j['probability']['neutral']))
-#     #graph_html = plot_graph(post,neg,neut)
-#     return 0
-
-
 def sentiment_analysis(tweets):
-    pos = 0
-    neut = 0
-    neg = 0
+    result = []
     for t in tweets:
         url = "http://text-processing.com/api/sentiment/"
         payload = { 'text': t }
@@ -206,17 +185,36 @@ def sentiment_analysis(tweets):
 
         j = r.json()
         if str(j['label']) == "pos":
-            pos+=1
+            result.append(1)
         elif str(j['label']) == "neutral":
-            neut+=1
+            result.append(0)
         else:
-            neg+=1
-    if pos >= neut and pos >= neg:
-        return 1
-    elif neut >= pos and neut >= neg:
-        return 0
-    else:
-        return -1
+            result.append(-1)
+    return result
+
+# def sentiment_analysis(tweets):
+#     pos = 0
+#     neut = 0
+#     neg = 0
+#     for t in tweets:
+#         url = "http://text-processing.com/api/sentiment/"
+#         payload = { 'text': t }
+#         headers = {}
+#         r=requests.post(url, data=payload, headers=headers)
+
+#         j = r.json()
+#         if str(j['label']) == "pos":
+#             pos+=1
+#         elif str(j['label']) == "neutral":
+#             neut+=1
+#         else:
+#             neg+=1
+#     if pos >= neut and pos >= neg:
+#         return 1
+#     elif neut >= pos and neut >= neg:
+#         return 0
+#     else:
+#         return -1
 
 @app.route("/callback")
 def handle_callback():
