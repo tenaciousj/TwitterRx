@@ -122,25 +122,56 @@ def handle_root():
 @app.route("/gettweets",methods=["POST"])
 def handle_gettweets():
     try:
-        url="https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+request.form["twitterHandle"]
-
-        user_timeline = MANAGER.urlopen('GET',
-                                        url,
-                                        headers={'Authorization': 'Bearer %s' % APP_TOKEN['access_token']})
-        raw_tweets = loads(user_timeline.data)
-        tweets = []
-
-        #sanitize tweet to get rid of unnecessary words
-        for item in raw_tweets:
-            tweets.append(str(item['text'].encode('utf-8')))
-
+        chkvalid="https://api.twitter.com/1.1/users/lookup.json?screen_name="+request.form["twitterHandle"]
+        chkvalid_resp=MANAGER.urlopen('GET',chkvalid,headers={'Authorization': 'Bearer %s' % APP_TOKEN['access_token']})
+        scrnm=loads(chkvalid_resp.data)
+        print scrnm
         
-        #graph_html = sentiment_analysis(tweets)
-        #return render_template('timeline.html',tweets=tweets)
+        if isinstance(scrnm,dict) and "errors" in scrnm.keys():
+            error_message="Invalid twitter screen name"
+            print error_message
+            return render_template("index.html", error_msg=error_message)
+            
 
-        return render_template('timeline.html')
+            
         #return render_template('timeline.html')
+        else:
+            
+            url="https://api.twitter.com/1.1/statuses/user_timeline.json?screen_name="+request.form["twitterHandle"]
+            user_timeline = MANAGER.urlopen('GET',
+                                            url,
+                                            headers={'Authorization': 'Bearer %s' % APP_TOKEN['access_token']})
+            raw_tweets = loads(user_timeline.data)
+            tweets = []
+            tweet_words = []
+
+            #sanitize tweet to get rid of unnecessary words
+            for item in raw_tweets:
+                ind_tweet = item['text']
+                tweets.append(str(item['text'].encode('utf-8')))
+                tweet_w = ind_tweet.split(" ")
+                for w in tweet_w:
+                    if "#" in w:
+                        w = w.replace("#", "")
+                    if "http" not in w and "https" not in w and "@" not in w and "\U0" not in w and "\u" not in w:
+                        tweet_words.append(w.encode('utf-8'))
+
+            #print tweet_strs
+            #pp = pprint.PrettyPrinter(indent=4)
+            #pp.pprint(tweets)
+            wordsfreq = Counter(tweet_words)
+            printByLine( countsSortedAlphabetically(wordsfreq, reverse=True) )
+
+            print "SENTIMENT ANALYSIS"
+            answer = sentiment_analysis(tweets)
+            print answer
+            return render_template('timeline.html',tweets=raw_tweets,sentiment=answer)
+
+
+
     except: raise
+
+    
 def sentiment_analysis(tweets):
     pos = []
     neg = []

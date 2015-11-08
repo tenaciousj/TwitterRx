@@ -19,7 +19,10 @@ a:hover {
   border: 1px solid #fff;
 }
 
-
+.errorMsg{
+  color: red;
+  font-size: 14px;
+}
 /*
  * Base structure
  */
