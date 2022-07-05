@@ -5,7 +5,7 @@ Flask-WTF==0.12
 oauth2==1.9.0.post1
 requests==2.7.0
 simplejson==3.7.2
-ujson==1.33
+ujson==5.4.0
 Unidecode==0.4.18
 urllib3==1.12
 virtualenv==12.0.7
